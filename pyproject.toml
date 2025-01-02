@@ -1,0 +1,17 @@
+[tool.poetry]
+name = "climbing progress"
+version = "0.1.0"
+description = ""
+authors = ["Artyom <evdokimov.artyom@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+streamlit = "^1.41.1"
+pandas = "^2.2.3"
+st-supabase-connection = "^2.0.1"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
