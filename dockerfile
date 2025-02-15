@@ -4,11 +4,14 @@ FROM python:3.9-slim
 # Set the working directory
 WORKDIR /app
 
-# Copy the requirements file
-COPY pyproject.toml poetry.lock ./
+# Install uv 
+RUN pip install uv
 
-# Install Poetry and dependencies
-RUN pip install poetry && poetry install --no-root
+# Copy the dependency files
+COPY pyproject.toml uv.lock ./
+
+# Synchronize dependencies using uv
+RUN uv sync 
 
 # Copy the rest of the application code
 COPY . .
@@ -17,4 +20,4 @@ COPY . .
 EXPOSE 8000
 
 # Run the application
-CMD ["poetry", "run", "uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]

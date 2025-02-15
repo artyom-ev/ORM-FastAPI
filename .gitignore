@@ -10,20 +10,16 @@ venv/
 env/
 ENV/
 
-# Poetry
-.poetry/
-*.lock
-
 # IDE
 .idea/
 .vscode/
 
-# Дистрибутивы и сборки
+# Distibutivs
 build/
 dist/
 *.egg-info/
 
-# Локальные базы данных
+# DBs
 *.sqlite3
 *.db
 
