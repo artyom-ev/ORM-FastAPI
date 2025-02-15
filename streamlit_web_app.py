@@ -1,38 +1,35 @@
 import streamlit as st
 import pandas as pd
 from sqlalchemy import create_engine, text
+from app.core.config import settings
 
-# Retrieve database credentials from Streamlit secrets
-db_username = st.secrets["DB_USERNAME"]
-db_password = st.secrets["DB_PASSWORD"]
-db_host = st.secrets["DB_HOST"]
-db_port = st.secrets["DB_PORT"]
-db_name = st.secrets["DB_NAME"]
+# Use create_engine for synchronous connections
+database_url = (
+    f"postgresql+psycopg2://{settings.db_username}:{settings.db_password}"
+    f"@{settings.db_host}:{settings.db_port}/{settings.db_name}"
+)
 
-# Construct the database URL
-database_url = f"postgresql://{db_username}:{db_password}@{db_host}:{db_port}/{db_name}"
-
-# Create the SQLAlchemy engine
 engine = create_engine(database_url)
 
-# Use a context manager to handle the connection
 try:
+    # Connect to the database
     with engine.connect() as connection:
-        # Wrap the SQL query in SQLAlchemy's `text()` function
-        query = text("SELECT * FROM climbs;")
-        
-        # Execute the query and fetch results as a list of dictionaries
+        # Execute the query
+        query = text("SELECT * FROM books;")
         result = connection.execute(query)
+        
+        # Fetch all rows as dictionaries
         rows = result.mappings().all()
         
-        # Convert the result to a DataFrame
+        # Convert to a DataFrame
         df = pd.DataFrame(rows)
         
         # Display the DataFrame in Streamlit
-        st.subheader('List of my climbs')
+        st.subheader('List of my books')
         st.dataframe(df)
 except Exception as e:
+    # Display any errors in Streamlit
     st.error(f"An error occurred: {e}")
 finally:
-    # Ensure the engine is disposed of properly
+    # Dispose of the engine to close the connection
     engine.dispose()
