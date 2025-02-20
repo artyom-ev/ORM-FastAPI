@@ -2,30 +2,21 @@ from fastapi import Depends, FastAPI
 from typing import Annotated
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
-from pydantic import BaseModel, ConfigDict
-from database import Base, BookModel, engine, get_session
+from database import Base, engine, get_session
+from models import BookModel
+from schemas import BookSchema, BookGetSchema
 
 app = FastAPI()
 
 SessionDep = Annotated[AsyncSession, Depends(get_session)]
 
-class BookSchema(BaseModel):
-    title: str
-    author: str
 
-class BookGetSchema(BaseModel):
-    id: int
-    title: str
-    author: str
-
-    # Enable ORM mode for compatibility with SQLAlchemy models
-    model_config = ConfigDict(from_attributes=True)
-
-@app.post("/setup")
+@app.post("/setup_db")
 async def setup_database():
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.drop_all)
         await conn.run_sync(Base.metadata.create_all)
+    return {"success": True}
 
 @app.post("/books")
 async def add_book(book: BookSchema, session: SessionDep) -> BookSchema:

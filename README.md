@@ -1,3 +1,3 @@
-# Climbing progress
+# FastAPI + ORM
 
-List of climbs done and still waiting to be done
+Basic setup for ORM usage
