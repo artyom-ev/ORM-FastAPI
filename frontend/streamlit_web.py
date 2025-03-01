@@ -1,27 +1,22 @@
 import streamlit as st
 import pandas as pd
 from sqlalchemy import create_engine, text
+from src.config import settings
 
-db_username = st.secrets["DB_USERNAME"]
-db_password = st.secrets["DB_PASSWORD"]
-db_host = st.secrets["DB_HOST"]
-db_port = st.secrets["DB_PORT"]
-db_name = st.secrets["DB_NAME"]
-
-database_url = f"postgresql://{db_username}:{db_password}@{db_host}:{db_port}/{db_name}"
+database_url = settings.DATABASE_URL_psycopg
 
 engine = create_engine(database_url)
 
 try:
     with engine.connect() as connection:
-        query = text("SELECT * FROM climbs;")
+        query = text("SELECT * FROM books;")
         
         result = connection.execute(query)
         rows = result.mappings().all()
         
         df = pd.DataFrame(rows)
         
-        st.subheader('List of my climbs')
+        st.subheader('List of my books')
         st.dataframe(df)
 except Exception as e:
     st.error(f"An error occurred: {e}")
